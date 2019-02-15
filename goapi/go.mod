@@ -1,4 +1,4 @@
-module goapp/goapi
+module go-postgres-app/goapp/goapi
 
 require (
 	github.com/gorilla/mux v1.7.0 // indirect
