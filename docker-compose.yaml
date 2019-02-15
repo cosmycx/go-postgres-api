@@ -1,0 +1,49 @@
+version: '3'
+
+services:
+
+  postgres:
+    image: postgres
+    container_name: postgres
+    env_file:
+      - ./.env
+    restart: unless-stopped
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - ./postgres/:/docker-entrypoint-initdb.d/
+    networks:
+      - fnet1
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    env_file:
+      - ./.env
+    ports:
+      - "${PGADMIN_PORT}:80"
+    depends_on:
+      - postgres
+    networks:
+      - fnet1
+    restart: unless-stopped
+
+  # goapi:
+  #   image: goapi
+  #   container_name: goapi
+  #   restart: unless-stopped
+  #   build:
+  #     context: ./goapi
+  #     dockerfile: Dockerfile
+  #   env_file:
+  #     - ./.env
+  #   ports:
+  #     - "${APP_PORT}:4444"
+  #   depends_on:
+  #     - postgres
+  #   networks:
+  #     - fnet1
+
+networks:
+  fnet1:
+    driver: bridge
