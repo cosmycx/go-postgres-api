@@ -28,21 +28,21 @@ services:
       - fnet1
     restart: unless-stopped
 
-  # goapi:
-  #   image: goapi
-  #   container_name: goapi
-  #   restart: unless-stopped
-  #   build:
-  #     context: ./goapi
-  #     dockerfile: Dockerfile
-  #   env_file:
-  #     - ./.env
-  #   ports:
-  #     - "${APP_PORT}:4444"
-  #   depends_on:
-  #     - postgres
-  #   networks:
-  #     - fnet1
+  goapi:
+    image: goapi
+    container_name: goapi
+    restart: unless-stopped
+    build:
+      context: ./goapi
+      dockerfile: Dockerfile
+    env_file:
+      - ./.env
+    ports:
+      - "${APP_PORT}:4444"
+    depends_on:
+      - postgres
+    networks:
+      - fnet1
 
 networks:
   fnet1:
