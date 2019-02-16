@@ -1,2 +1,5 @@
 ## go-postgres-app
-saves users to Postgres
+connects Postgres
+insert & read Postgres
+templates index
+upload a file
