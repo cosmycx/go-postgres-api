@@ -33,13 +33,13 @@ func ConnectPostgres() *sql.DB {
 		if err == nil {
 			break
 		} else {
-			log.Printf("Postgres, Error at ping, not connected: %v\n", err)
-			log.Println("Postgres, reconnecting...")
+			log.Printf("Postgres Error at ping, not connected: %v\n", err)
+			log.Println("Postgres reconnecting...")
 			time.Sleep(3 * time.Second)
 		}
 
 		if loops == 10 {
-			log.Fatalln("Give up,Postgres connection not available")
+			log.Fatalln("Give up, Postgres connection not available")
 		}
 	} // .for
 

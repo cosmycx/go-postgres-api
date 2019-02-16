@@ -1,10 +1,10 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"go-postgres-app/goapp/goapi/driver"
-	"go-postgres-app/goapp/goapi/routes"
+	"go-postgres-app/goapp/goapi/server"
+
 	"log"
 	"net/http"
 	"os"
@@ -17,44 +17,43 @@ const (
 	port = ":4444"
 )
 
-type server struct {
-	router *mux.Router
-	db     *sql.DB
-} // .server
-
 func main() {
 
 	// --------------------------------
 	// 				Postgres connect
 	// --------------------------------
 	db := driver.ConnectPostgres()
-	fmt.Printf("Postgres connected OK: %v\n", db)
 
+	fmt.Printf("Postgres connected OK: %v\n", db)
 	// --------------------------------
-	// 				Server
+	// 				server
 	// --------------------------------
 	r := mux.NewRouter()
-	s := &server{
-		router: r,
-		db:     db,
+	s := server.Server{
+		Router:   r,
+		Postgres: db,
+		DBName:   os.Getenv("POSTGRES_DB"),
 	} // .server
 
 	// --------------------------------
 	// 				Routes
 	// --------------------------------
-	s.router.HandleFunc("/", routes.Index).Methods("GET")
-	s.router.HandleFunc("/upload", routes.Upload).Methods("POST")
+	s.Router.HandleFunc("/", s.Index).Methods("GET")
+	s.Router.HandleFunc("/upload", s.Upload).Methods("POST")
+
+	s.Router.HandleFunc("/insert", s.InsertOne).Methods("POST")
+	s.Router.HandleFunc("/getall", s.ReadAll).Methods("GET")
 
 	// --------------------------------
 	// 				Start Server
 	// --------------------------------
 	go func() {
-		log.Fatalln(http.ListenAndServe(port, s.router))
+		log.Fatalln(http.ListenAndServe(port, s.Router))
 	}()
 
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, os.Interrupt)
 	<-ch // block
-	s.db.Close()
+	s.Postgres.Close()
 	log.Println("bye")
 } // .main
